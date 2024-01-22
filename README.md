@@ -25,3 +25,4 @@ Fecha de presentación 27 de enero de 2024
 ## Desarrollo
 
 Puedes conocer un diario de desarrollo en el siguiente enlace.
+[Journal](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/README.md)
