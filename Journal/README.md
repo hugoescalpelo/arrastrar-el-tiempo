@@ -34,3 +34,9 @@ Comenzaré por hacer pruebas de alimentación únicamente con la bateria de celu
 Pues ya conecté todo a una pila y funcionó como esperaba. 
 
 La siguiente parte es hacer que cambien los audios dependiendo de cómo se girla la mesa. Le pregunté a Sue cómo va y parece se se cambiará por una improvisación de Mau. En ese caso ya terminé. Pero bueno, esperaré la respuesta.
+
+Puede verse la primera prueba acá.
+
+[Primer prueba del transmisor de audio](https://www.instagram.com/p/C2YZ9prOXzU/)
+
+---
