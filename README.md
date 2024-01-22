@@ -24,4 +24,4 @@ Fecha de presentación 27 de enero de 2024
 
 ## Desarrollo
 
-Puedes conocer un diario de desarrollo en el siguiente enlace
+Puedes conocer un diario de desarrollo en el siguiente enlace.

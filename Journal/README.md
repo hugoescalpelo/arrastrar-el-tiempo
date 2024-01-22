@@ -22,4 +22,15 @@ Comencé por crear el repositorio.
 
 [Arrastrar el tiempo - GitHub](https://github.com/hugoescalpelo/arrastrar-el-tiempo)
 
-Creé el diagrama general
+---
+Creé el diagrama general.
+
+![](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Im%C3%A1genes/Diagrama%20general%20Arrastrar%20el%20Tiempo.png?raw=true)
+
+---
+Comenzaré por hacer pruebas de alimentación únicamente con la bateria de celular y cables USB.
+
+---
+Pues ya conecté todo a una pila y funcionó como esperaba. 
+
+La siguiente parte es hacer que cambien los audios dependiendo de cómo se girla la mesa. Le pregunté a Sue cómo va y parece se se cambiará por una improvisación de Mau. En ese caso ya terminé. Pero bueno, esperaré la respuesta.
