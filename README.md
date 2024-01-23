@@ -26,3 +26,9 @@ Fecha de presentación 27 de enero de 2024
 
 Puedes conocer un diario de desarrollo en el siguiente enlace.
 [Journal](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/README.md)
+
+## Diagramas
+
+Este es el diagrama general de conexiones. 
+
+![](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Im%C3%A1genes/Diagrama%20general%20Arrastrar%20el%20Tiempo.png?raw=true)
