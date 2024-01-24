@@ -30,7 +30,13 @@ sudo apt-get install python3
 ```
 ## Instalación de bibliotecas
 
-- smbus (i2c)
+### smbus
+Esta biblioteca es usada por Python para comunicarse con la brujula digital. Para instalar esta biblioteca ejecuta los siguientes comandos.
+```
+sudo apt-get update
+sudo apt-get install python3-smbus
+sudo pip3 install smbus2
+```
 
 ## Configuración de audios
 
