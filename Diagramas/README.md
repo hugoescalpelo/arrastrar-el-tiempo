@@ -6,11 +6,10 @@ En este documento encontrarás los diagramas del proyecto.
 Este diagrama esta hecho en Mermaid para MarkDown.
 ```mermaid
 graph TD;
-    Tx1[Antenna] --> Tx2[Transmisor FM]
-    Tx2 --> Rp[Raspberry Pi]
-    Rp --> Bt[Bateria]
-
+    Tx2[Transmisor FM] --> Tx1[Antenna]
+    Rp[Raspberry Pi] --> Tx2
+    Bt[Bateria] --> Rp
     Mg[Brujula Digital] --> Rp;
 
-    Tx2 --> Bt;
+    Bt --> Tx2;
 ```
