@@ -16,5 +16,5 @@ graph TD;
     R1[Radio 1] --> |FM| Tx1
     R2[Radio 2] --> |FM| Tx1
     R3[Radio 3] --> |FM| Tx1
-    R4[Radio 4] --> |FM| Tx|;
+    R4[Radio 4] --> |FM| Tx1;
 ```
