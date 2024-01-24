@@ -22,7 +22,7 @@ Fecha de presentación 27 de enero de 2024
 |1|Tornillería|
 |1|Desarrollo|
 
-## Desarrollo
+## Journal
 
 Puedes conocer un diario de desarrollo en el siguiente enlace.
 [Journal](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/README.md)
