@@ -37,7 +37,9 @@ sudo apt-get update
 sudo apt-get install python3-smbus
 sudo pip3 install smbus2
 ```
-### pygame
+### pip install pydub simpleaudio
+
+### ffmpeg
 
 ## Configuración de audios
 Para que este programa funcione, se requieren 4 archivos de audio en MP3. Los cuales deberán tener el siguiente esquema de nobmres

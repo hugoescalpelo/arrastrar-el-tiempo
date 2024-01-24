@@ -52,3 +52,9 @@ He creado los diagramas y realizado la documentación.
 ## 2024-01-24
 
 He creado un programa de prueba para garantizar que funciona la brújula digital.
+
+---
+Traté de completar un programa que reprodujera los audios y leyera la brujula pero no lo logré.
+
+---
+He notado que el motivo por el cual el programa no cambia los audios es porque se daño la brujula digital. En este momento he comprado otra. Estoy a la espera de la entrega.
