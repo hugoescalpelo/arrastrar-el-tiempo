@@ -41,32 +41,33 @@ bus.write_byte_data(address, 1, 0b00100000)
 bus.write_byte_data(address, 2, 0b00000011)
 
 audio_files = {
-    'N': 'Audio/audio01.mp3',
-    'E': 'Audio/audio02.mp3',
-    'S': 'Audio/audio03.mp3',
-    'W': 'Audio/audio04.mp3'
+    'N': 'audio01.mp3',
+    'E': 'audio02.mp3',
+    'S': 'audio03.mp3',
+    'W': 'audio04.mp3'
 }
 
 current_cardinal = None
 current_thread = None
 
-def play_audio(file):
-    print(f"Reproduciendo: {file}")
-    audio = AudioSegment.from_file(file)
-    play(audio)
+def play_audio_continuously(file):
+    while True:
+        print(f"Reproduciendo: {file}")
+        audio = AudioSegment.from_file(file)
+        play(audio)
 
 while True:
     x, y = read_sensor(address)
     heading = calculate_heading(x, y)
     cardinal = get_cardinal(heading)
 
-    if cardinal != current_cardinal:
+    if cardinal != current_cardinal or (current_thread and not current_thread.is_alive()):
         print(f"Dirección del sensor: {cardinal} (Heading: {heading:.2f} grados)")
         audio_file = audio_files[cardinal]
         if current_thread and current_thread.is_alive():
             current_thread.join()  # Espera a que el hilo actual termine
-        current_thread = threading.Thread(target=play_audio, args=(audio_file,))
+        current_thread = threading.Thread(target=play_audio_continuously, args=(audio_file,))
         current_thread.start()
         current_cardinal = cardinal
 
-    time.sleep(0.1)
+    time.sleep(1)  # Comprobación cada segundo
