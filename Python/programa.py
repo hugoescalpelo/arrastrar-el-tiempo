@@ -41,16 +41,17 @@ bus.write_byte_data(address, 1, 0b00100000)
 bus.write_byte_data(address, 2, 0b00000011)
 
 audio_files = {
-    'N': 'audio01.mp3',
-    'E': 'audio02.mp3',
-    'S': 'audio03.mp3',
-    'W': 'audio04.mp3'
+    'N': 'Audio/audio01.mp3',
+    'E': 'Audio/audio02.mp3',
+    'S': 'Audio/audio03.mp3',
+    'W': 'Audio/audio04.mp3'
 }
 
 current_cardinal = None
 current_thread = None
 
 def play_audio(file):
+    print(f"Reproduciendo: {file}")
     audio = AudioSegment.from_file(file)
     play(audio)
 
@@ -60,6 +61,7 @@ while True:
     cardinal = get_cardinal(heading)
 
     if cardinal != current_cardinal:
+        print(f"Dirección del sensor: {cardinal} (Heading: {heading:.2f} grados)")
         audio_file = audio_files[cardinal]
         if current_thread and current_thread.is_alive():
             current_thread.join()  # Espera a que el hilo actual termine
