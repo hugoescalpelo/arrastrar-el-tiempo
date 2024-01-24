@@ -2,7 +2,21 @@
 
 En este documento encontrarás instrucciones para correr el programa de Python.
 
+## Configuración de Raspberry Pi
+
+### Activar I2C
+Este programa hace uso del sensor GY-87, el cual se comunica con I2C. Para que sea posible, es necesario activarlo en las interfases de la Raspberry Pi
+- Ejecuta el comando `sudo raspi-config`
+- Desplazate a `Interface Options`
+- Selecciona `I2C`
+- Selecciona la opción `Yes`
+- Reinicia la Raspberry con el comando `sudo reboot`
+
+### Instalar Python
+
 ## Instalación de bibliotecas
+
+- smbus (i2c)
 
 ## Configuración de audios
 

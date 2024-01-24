@@ -33,7 +33,30 @@ Este es el diagrama general de conexiones.
 
 ![](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Im%C3%A1genes/Diagrama%20general%20Arrastrar%20el%20Tiempo.png?raw=true)
 
+## Compatibilidad
+
+Este repositorio tiene como proposito correr en una Raspberry Pi. Es compatible con modelos 3B+ y 4. No se ha probado en 5.
+
 ## Instrucciones
+
+Para clonar este repositorio en Raspberry Pi, realiza lo siguiente:
+- Instalar Git en Raspberry Pi
+    ```
+    sudo apt-install git
+    ```
+- Crear directorio de GitHub y entrar en el
+    ```
+    mkdir ~\Documents\GitHub
+    cd ~\Documents\GitHub
+    ```
+- Clonar el repositorio
+    ```
+    git clone https://github.com/hugoescalpelo/arrastrar-el-tiempo.git
+    ```
+- En caso de que necesites actualziar el repositorio, entra al directorio `arrastrar-el-tiempo` y ejecuta el siguiente comando.
+    ```
+    git pull
+    ```
 
 Para poder hacer funcionar este proyecto se recomienda leer la documentación completa primero.
 
