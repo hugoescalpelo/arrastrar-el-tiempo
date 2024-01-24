@@ -4,31 +4,49 @@ import time
 # Crea una instancia de smbus para la comunicación I2C
 bus = smbus.SMBus(1)
 
-# Direcciones I2C del acelerómetro y magnetómetro del GY-87
-# Estas direcciones pueden variar, asegúrate de verificarlas
-ACCEL_ADDRESS = 0xXX  
-MAG_ADDRESS = 0xYY  
+# Direcciones I2C para el GY-87
+# Estas direcciones son ejemplos y pueden no ser las correctas para tu sensor
+ACCEL_ADDRESS = 0x68
+MAG_ADDRESS = 0x1E
 
-# Función para leer datos del acelerómetro
+# Registros específicos del acelerómetro y magnetómetro
+# Deben ajustarse según las especificaciones del GY-87
+ACCEL_XOUT_H = 0x3B
+MAG_XOUT_H = 0x03
+
+def leer_datos_sensor(address, reg):
+    # Leer datos de 16 bits (dos registros)
+    high = bus.read_byte_data(address, reg)
+    low = bus.read_byte_data(address, reg + 1)
+
+    # Convertir los valores
+    valor = (high << 8) + low
+
+    # Corregir signo del valor
+    if valor > 32767:
+        valor -= 65536
+    return valor
+
 def leer_acelerometro():
-    # Aquí necesitas escribir el código para leer los datos del acelerómetro
-    # Esto incluye leer los registros adecuados a través de I2C
-    # y convertir los valores leídos a unidades comprensibles (como m/s^2)
-    pass
+    # Leer los valores del acelerómetro
+    x = leer_datos_sensor(ACCEL_ADDRESS, ACCEL_XOUT_H)
+    # Agrega la lectura de los ejes Y y Z si es necesario
+    return x
 
-# Función para leer datos del magnetómetro
 def leer_magnetometro():
-    # Similar a leer_acelerometro, pero para el magnetómetro
-    pass
+    # Leer los valores del magnetómetro
+    x = leer_datos_sensor(MAG_ADDRESS, MAG_XOUT_H)
+    # Agrega la lectura de los ejes Y y Z si es necesario
+    return x
 
 # Bucle principal
 try:
     while True:
-        acel_data = leer_acelerometro()
-        mag_data = leer_magnetometro()
+        acel_x = leer_acelerometro()
+        mag_x = leer_magnetometro()
 
-        print("Datos del Acelerómetro:", acel_data)
-        print("Datos del Magnetómetro:", mag_data)
+        print(f"Valor del Acelerómetro (eje X): {acel_x}")
+        print(f"Valor del Magnetómetro (eje X): {mag_x}")
 
         time.sleep(1)
 
