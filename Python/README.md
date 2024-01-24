@@ -13,7 +13,21 @@ Este programa hace uso del sensor GY-87, el cual se comunica con I2C. Para que s
 - Reinicia la Raspberry con el comando `sudo reboot`
 
 ### Instalar Python
+Primero comprueba que Python se encuentra instalado, corre el siguiente comando en una terminal.
 
+```
+python --version
+```
+ En este caso el resultado fue el siguiente:
+
+```
+Python 3.9.2
+```
+En caso de no tener python instalado, corre el siguiente programa. Este comando requiere conexión a Internet.
+```
+sudo apt-get update
+sudo apt-get install python3
+```
 ## Instalación de bibliotecas
 
 - smbus (i2c)
