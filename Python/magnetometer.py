@@ -2,33 +2,20 @@ import smbus2
 import time
 import math
 
-# Configura el bus I2C
-bus = smbus2.SMBus(1)
+class HMC5883L:
+    def __init__(self):
+        self.bus = smbus2.SMBus(1)
+        self.address = 0x1E
+        self.bus.write_byte_data(self.address, 0x00, 0x70)
+        self.bus.write_byte_data(self.address, 0x01, 0xA0)
+        self.bus.write_byte_data(self.address, 0x02, 0x00)
 
-# Dirección I2C del HMC5883L
-address = 0x1E
-
-def inicializar_sensor():
-    try:
-        # Configura el registro de modo del HMC5883L
-        bus.write_byte_data(address, 0x02, 0x00)
-        print("Conexión con el sensor HMC5883L establecida correctamente.")
-        return True
-    except Exception as e:
-        print(f"Error al establecer conexión con el sensor: {e}")
-        return False
-
-def leer_brujula():
-    try:
-        # Lee los datos del sensor
-        data = bus.read_i2c_block_data(address, 0x03, 6)
-
-        # Convierte los valores a un rango de 16 bits
+    def read_angle(self):
+        data = self.bus.read_i2c_block_data(self.address, 0x03, 6)
         x = (data[0] << 8) | data[1]
         z = (data[2] << 8) | data[3]
         y = (data[4] << 8) | data[5]
 
-        # Ajusta los valores negativos
         if x > 32767:
             x -= 65536
         if y > 32767:
@@ -36,37 +23,29 @@ def leer_brujula():
         if z > 32767:
             z -= 65536
 
-        # Calcula el ángulo
-        angulo = math.atan2(y, x)
-        if angulo < 0:
-            angulo += 2 * math.pi
+        angle = math.atan2(y, x)
+        if angle < 0:
+            angle += 2 * math.pi
 
-        # Convierte a grados
-        angulo = math.degrees(angulo)
+        return math.degrees(angle)
 
-        return angulo
-    except Exception as e:
-        print(f"Error al leer los datos del sensor: {e}")
-        return None
+    def cardinal_direction(self, angle):
+        if angle > 315 or angle <= 45:
+            return 'N'
+        elif 45 < angle <= 135:
+            return 'E'
+        elif 135 < angle <= 225:
+            return 'S'
+        elif 225 < angle <= 315:
+            return 'W'
 
-def determinar_direccion(angulo):
-    if angulo >= 45 and angulo < 135:
-        return "Este"
-    elif angulo >= 135 and angulo < 225:
-        return "Sur"
-    elif angulo >= 225 and angulo < 315:
-        return "Oeste"
-    else:
-        return "Norte"
+sensor = HMC5883L()
 
-if inicializar_sensor():
+try:
     while True:
-        angulo = leer_brujula()
-        if angulo is not None:
-            direccion = determinar_direccion(angulo)
-            print(f"Ángulo: {angulo:.2f}°, Dirección: {direccion}")
-        else:
-            print("No se pudo leer el ángulo.")
+        angle = sensor.read_angle()
+        direction = sensor.cardinal_direction(angle)
+        print(f"Dirección: {direction}")
         time.sleep(1)
-else:
-    print("No se pudo inicializar el sensor.")
+except KeyboardInterrupt:
+    print("Programa terminado por el usuario")
