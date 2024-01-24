@@ -39,4 +39,9 @@ Puede verse la primera prueba acá.
 
 [Primer prueba del transmisor de audio](https://www.instagram.com/p/C2YZ9prOXzU/)
 
+## 2024-01-23
+
+Hoy tuve una junta con Sué, donde me confirmó que el comportamiento corresponde a audios que se reproducen fundidos cuando se mueve la mesa con el sensor.
+
 ---
+Agregé los archivos de audio que Sué me mandó por whatsapp.
