@@ -45,3 +45,10 @@ Hoy tuve una junta con Sué, donde me confirmó que el comportamiento correspond
 
 ---
 Agregé los archivos de audio que Sué me mandó por whatsapp.
+
+---
+He creado los diagramas y realizado la documentación.
+
+## 2024-01-24
+
+He creado un programa de prueba para garantizar que funciona la brújula digital.

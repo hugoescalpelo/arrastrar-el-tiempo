@@ -37,8 +37,15 @@ sudo apt-get update
 sudo apt-get install python3-smbus
 sudo pip3 install smbus2
 ```
+### pygame
 
 ## Configuración de audios
+Para que este programa funcione, se requieren 4 archivos de audio en MP3. Los cuales deberán tener el siguiente esquema de nobmres
+
+- audio01.mp3
+- audio02.mp3
+- audio03.mp3
+- audio04.mp3
 
 ## Circuito
 
@@ -52,3 +59,7 @@ Las pruebas que se presentan a continuación son una herramienta para comprobar 
 
 En el siguiente documento puedes encontrar las instrucciones para correr las pruebas necesarias para que todo en el programa funcione.
 - [Test de brujula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/magnetometer.md)
+
+## Referencias
+
+- [Documentación de smbus2](https://pypi.org/project/smbus2/)
