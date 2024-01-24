@@ -4,15 +4,14 @@ import time
 # Crea una instancia de smbus para la comunicación I2C
 bus = smbus.SMBus(1)
 
-# Direcciones I2C para el GY-87
-# Estas direcciones son ejemplos y pueden no ser las correctas para tu sensor
-ACCEL_ADDRESS = 0x68
-MAG_ADDRESS = 0x1E
+# Direcciones I2C para el GY-87 actualizadas
+ACCEL_ADDRESS = 0x77
+MAG_ADDRESS = 0x68
 
 # Registros específicos del acelerómetro y magnetómetro
-# Deben ajustarse según las especificaciones del GY-87
-ACCEL_XOUT_H = 0x3B
-MAG_XOUT_H = 0x03
+# Ajusta estos según el datasheet del GY-87
+ACCEL_REG = 0xXX  # Reemplaza XX con el registro correcto
+MAG_REG = 0xXX    # Reemplaza XX con el registro correcto
 
 def leer_datos_sensor(address, reg):
     # Leer datos de 16 bits (dos registros)
@@ -29,24 +28,24 @@ def leer_datos_sensor(address, reg):
 
 def leer_acelerometro():
     # Leer los valores del acelerómetro
-    x = leer_datos_sensor(ACCEL_ADDRESS, ACCEL_XOUT_H)
+    x = leer_datos_sensor(ACCEL_ADDRESS, ACCEL_REG)
     # Agrega la lectura de los ejes Y y Z si es necesario
     return x
 
 def leer_magnetometro():
     # Leer los valores del magnetómetro
-    x = leer_datos_sensor(MAG_ADDRESS, MAG_XOUT_H)
+    x = leer_datos_sensor(MAG_ADDRESS, MAG_REG)
     # Agrega la lectura de los ejes Y y Z si es necesario
     return x
 
 # Bucle principal
 try:
     while True:
-        acel_x = leer_acelerometro()
-        mag_x = leer_magnetometro()
+        acel_data = leer_acelerometro()
+        mag_data = leer_magnetometro()
 
-        print(f"Valor del Acelerómetro (eje X): {acel_x}")
-        print(f"Valor del Magnetómetro (eje X): {mag_x}")
+        print("Datos del Acelerómetro:", acel_data)
+        print("Datos del Magnetómetro:", mag_data)
 
         time.sleep(1)
 
