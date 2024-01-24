@@ -32,3 +32,13 @@ Puedes conocer un diario de desarrollo en el siguiente enlace.
 Este es el diagrama general de conexiones. 
 
 ![](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Im%C3%A1genes/Diagrama%20general%20Arrastrar%20el%20Tiempo.png?raw=true)
+
+## Instrucciones
+
+Para poder hacer funcionar este proyecto se recomienda leer la documentación completa primero.
+
+- [Instalación y arranque automático](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/README.md)
+
+En caso de que desees cambiar el hardware, alguna biblioteca o entender cómo funcionan la carga de audios, se recomienda leer la sección de tests.
+
+-[Brujula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/magnetometer.md)
