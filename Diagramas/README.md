@@ -3,7 +3,7 @@
 En este documento encontrarás los diagramas del proyecto.
 
 ## Conexión general
-Este diagrama esta hecho en Mermaid para MarkDown.
+Este diagrama esta hecho en Mermaid para MarkDown y es visible en GitHub.
 ```mermaid
 graph TD;
     Tx2[Transmisor FM] --> |BNC| Tx1[Antena]
@@ -29,7 +29,7 @@ GND---->GND
 SDA---->GPIO2 (SDA)
 SCL---->GPIO3 (SCL)
 ```
-Si tienes duda cuales son los pines de cada sensor, consulta su pinout.
+Si tienes duda cuales son los pines de cada sensor, consulta su pinout en este repositorio:
 
-- [Raspberry Pi Pinout]()
-- [GY-87 Pinout]()
+- [Raspberry Pi Pinout](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Im%C3%A1genes/Raspberry%20Pi%203B%2B%20GPIO.png)
+- [GY-87 Pinout](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Im%C3%A1genes/GY87%20Pinout.jpg)
