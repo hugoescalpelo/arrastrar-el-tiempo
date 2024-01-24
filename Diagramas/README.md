@@ -18,3 +18,18 @@ graph TD;
     R3[Radio 3] --> |FM| Tx1
     R4[Radio 4] --> |FM| Tx1;
 ```
+
+## Conexión del sensor
+
+Se usará un sensor GY-87 vía I2C, el cual se representa con la siguiente tabla
+```
+GY-87   Raspberry Pi
+Vcc---->3.3V
+GND---->GND
+SDA---->GPIO2 (SDA)
+SCL---->GPIO3 (SCL)
+```
+Si tienes duda cuales son los pines de cada sensor, consulta su pinout.
+
+- [Raspberry Pi Pinout]()
+- [GY-87 Pinout]()
