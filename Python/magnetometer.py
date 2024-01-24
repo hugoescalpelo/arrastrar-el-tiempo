@@ -5,15 +5,14 @@ import math
 # Configura el bus I2C
 bus = smbus2.SMBus(1)
 
-# Dirección I2C del GY-87
-address = 0x68
+# Dirección I2C del HMC5883L
+address = 0x1E
 
 def inicializar_sensor():
     try:
-        # Configura el registro de control del magnetómetro
-        bus.write_byte_data(address, 0x37, 0x02)
-        bus.write_byte_data(address, 0x0A, 0x01)
-        print("Conexión con el sensor GY-87 establecida correctamente.")
+        # Configura el registro de modo del HMC5883L
+        bus.write_byte_data(address, 0x02, 0x00)
+        print("Conexión con el sensor HMC5883L establecida correctamente.")
         return True
     except Exception as e:
         print(f"Error al establecer conexión con el sensor: {e}")
@@ -21,11 +20,12 @@ def inicializar_sensor():
 
 def leer_brujula():
     try:
-        # Lee los datos del magnetómetro
+        # Lee los datos del sensor
         data = bus.read_i2c_block_data(address, 0x03, 6)
 
         # Convierte los valores a un rango de 16 bits
         x = (data[0] << 8) | data[1]
+        z = (data[2] << 8) | data[3]
         y = (data[4] << 8) | data[5]
 
         # Ajusta los valores negativos
@@ -33,6 +33,8 @@ def leer_brujula():
             x -= 65536
         if y > 32767:
             y -= 65536
+        if z > 32767:
+            z -= 65536
 
         # Calcula el ángulo
         angulo = math.atan2(y, x)
