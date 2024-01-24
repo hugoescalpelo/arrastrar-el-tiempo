@@ -5,36 +5,47 @@ import math
 # Configura el bus I2C
 bus = smbus2.SMBus(1)
 
-# Dirección I2C del GY-87 (puede variar, verifica la documentación de tu sensor)
+# Dirección I2C del GY-87
 address = 0x68
 
-# Configura el registro de control del magnetómetro
-bus.write_byte_data(address, 0x37, 0x02)
-bus.write_byte_data(address, 0x0A, 0x01)
+def inicializar_sensor():
+    try:
+        # Configura el registro de control del magnetómetro
+        bus.write_byte_data(address, 0x37, 0x02)
+        bus.write_byte_data(address, 0x0A, 0x01)
+        print("Conexión con el sensor GY-87 establecida correctamente.")
+        return True
+    except Exception as e:
+        print(f"Error al establecer conexión con el sensor: {e}")
+        return False
 
 def leer_brujula():
-    # Lee los datos del magnetómetro
-    data = bus.read_i2c_block_data(address, 0x03, 6)
+    try:
+        # Lee los datos del magnetómetro
+        data = bus.read_i2c_block_data(address, 0x03, 6)
 
-    # Convierte los valores a un rango de 16 bits
-    x = (data[0] << 8) | data[1]
-    y = (data[4] << 8) | data[5]
+        # Convierte los valores a un rango de 16 bits
+        x = (data[0] << 8) | data[1]
+        y = (data[4] << 8) | data[5]
 
-    # Ajusta los valores negativos
-    if x > 32767:
-        x -= 65536
-    if y > 32767:
-        y -= 65536
+        # Ajusta los valores negativos
+        if x > 32767:
+            x -= 65536
+        if y > 32767:
+            y -= 65536
 
-    # Calcula el ángulo
-    angulo = math.atan2(y, x)
-    if angulo < 0:
-        angulo += 2 * math.pi
+        # Calcula el ángulo
+        angulo = math.atan2(y, x)
+        if angulo < 0:
+            angulo += 2 * math.pi
 
-    # Convierte a grados
-    angulo = math.degrees(angulo)
+        # Convierte a grados
+        angulo = math.degrees(angulo)
 
-    return angulo
+        return angulo
+    except Exception as e:
+        print(f"Error al leer los datos del sensor: {e}")
+        return None
 
 def determinar_direccion(angulo):
     if angulo >= 45 and angulo < 135:
@@ -46,8 +57,14 @@ def determinar_direccion(angulo):
     else:
         return "Norte"
 
-while True:
-    angulo = leer_brujula()
-    direccion = determinar_direccion(angulo)
-    print(f"Ángulo: {angulo:.2f}°, Dirección: {direccion}")
-    time.sleep(1)
+if inicializar_sensor():
+    while True:
+        angulo = leer_brujula()
+        if angulo is not None:
+            direccion = determinar_direccion(angulo)
+            print(f"Ángulo: {angulo:.2f}°, Dirección: {direccion}")
+        else:
+            print("No se pudo leer el ángulo.")
+        time.sleep(1)
+else:
+    print("No se pudo inicializar el sensor.")
