@@ -20,11 +20,11 @@ def read_hmc5883l():
     y = (data[4] << 8) | data[5]
     
     if x >= 0x8000:
-        x -= 0x10000
+        x = -(0x10000 - x)
     if y >= 0x8000:
-        y -= 0x10000
+        y = -(0x10000 - y)
     if z >= 0x8000:
-        z -= 0x10000
+        z = -(0x10000 - z)
 
     return x, y, z
 
@@ -33,6 +33,8 @@ def calculate_heading(x, y):
     heading = math.atan2(y, x)
     if heading < 0:
         heading += 2 * math.pi
+    if heading > 2 * math.pi:
+        heading -= 2 * math.pi
     return math.degrees(heading)
 
 # Inicialización
