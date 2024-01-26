@@ -28,7 +28,23 @@ def read_qmc5883l():
 
     return x, y, z
 
-def calculate_heading(x, y):
+def calibrate_qmc5883l(duration=30):
+    print("Comenzando calibración. Gira el sensor en todas las direcciones durante los próximos {} segundos...".format(duration))
+    max_x = max_y = -math.inf
+    min_x = min_y = math.inf
+
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        x, y, z = read_qmc5883l()
+        max_x, max_y = max(max_x, x), max(max_y, y)
+        min_x, min_y = min(min_x, x), min(min_y, y)
+        time.sleep(0.1)
+
+    return (max_x + min_x) / 2, (max_y + min_y) / 2
+
+def calculate_heading(x, y, offset_x, offset_y):
+    x -= offset_x
+    y -= offset_y
     heading = math.atan2(y, x)
     if heading < 0:
         heading += 2 * math.pi
@@ -51,10 +67,13 @@ bus = smbus.SMBus(1)  # Usar 0 para modelos antiguos de Raspberry Pi
 # Inicializar el sensor QMC5883L
 init_qmc5883l()
 
+# Calibrar el sensor
+offset_x, offset_y = calibrate_qmc5883l()
+
 try:
     while True:
         x, y, z = read_qmc5883l()
-        heading = calculate_heading(x, y)
+        heading = calculate_heading(x, y, offset_x, offset_y)
         orientation = get_orientation(heading)
         print(f"Ángulo: {heading:.2f} grados, Orientación: {orientation}")
         time.sleep(1)
