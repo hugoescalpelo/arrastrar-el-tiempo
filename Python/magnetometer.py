@@ -35,6 +35,16 @@ def calculate_heading(x, y):
     heading = math.degrees(heading)
     return heading
 
+def get_orientation(heading):
+    if heading < 45 or heading >= 315:
+        return 'N'
+    elif heading < 135:
+        return 'E'
+    elif heading < 225:
+        return 'S'
+    else:
+        return 'W'
+
 # Inicializar I2C (smbus)
 bus = smbus.SMBus(1)  # Usar 0 para modelos antiguos de Raspberry Pi
 
@@ -45,7 +55,8 @@ try:
     while True:
         x, y, z = read_qmc5883l()
         heading = calculate_heading(x, y)
-        print(f"Ángulo: {heading:.2f} grados")
+        orientation = get_orientation(heading)
+        print(f"Ángulo: {heading:.2f} grados, Orientación: {orientation}")
         time.sleep(1)
 
 except KeyboardInterrupt:
