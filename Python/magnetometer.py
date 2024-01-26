@@ -2,49 +2,50 @@ import smbus
 import time
 import math
 
-# Configuración del bus I2C
-bus = smbus.SMBus(1)  # Utiliza 0 para Raspberry Pi Model A y Model B de la primera generación
-address = 0x0D
+# Dirección I2C del QMC5883L
+QMC5883L_ADDR = 0x0D
 
-def read_sensor():
-    # Leer los datos del sensor
-    data = bus.read_i2c_block_data(address, 0x00, 6)
+# Registros del QMC5883L
+QMC5883L_X_LSB = 0x00
+QMC5883L_CONFIG = 0x09
 
-    # Convertir los datos
-    x = data[0] * 256 + data[1]
+def init_qmc5883l():
+    bus.write_byte_data(QMC5883L_ADDR, QMC5883L_CONFIG, 0x01)
+
+def read_qmc5883l():
+    data = bus.read_i2c_block_data(QMC5883L_ADDR, QMC5883L_X_LSB, 6)
+    x = data[0] | data[1] << 8
+    y = data[2] | data[3] << 8
+    z = data[4] | data[5] << 8
+
+    # Convertir a 16 bits si es necesario
     if x > 32767:
         x -= 65536
-    y = data[2] * 256 + data[3]
     if y > 32767:
         y -= 65536
-    z = data[4] * 256 + data[5]
     if z > 32767:
         z -= 65536
 
     return x, y, z
 
 def calculate_heading(x, y):
-    angle = math.atan2(y, x)
-    if angle < 0:
-        angle += 2 * math.pi
-    return math.degrees(angle)
+    heading = math.atan2(y, x)
+    if heading < 0:
+        heading += 2 * math.pi
+    heading = math.degrees(heading)
+    return heading
 
-def get_orientation(heading):
-    if heading >= 315 or heading < 45:
-        return 'N'
-    elif 45 <= heading < 135:
-        return 'E'
-    elif 135 <= heading < 225:
-        return 'S'
-    elif 225 <= heading < 315:
-        return 'W'
+# Inicializar I2C (smbus)
+bus = smbus.SMBus(1)  # Usar 0 para modelos antiguos de Raspberry Pi
+
+# Inicializar el sensor QMC5883L
+init_qmc5883l()
 
 try:
     while True:
-        x, y, z = read_sensor()
+        x, y, z = read_qmc5883l()
         heading = calculate_heading(x, y)
-        orientation = get_orientation(heading)
-        print("Ángulo: {:.2f}°, Orientación: {}".format(heading, orientation))
+        print(f"Ángulo: {heading:.2f} grados")
         time.sleep(1)
 
 except KeyboardInterrupt:
