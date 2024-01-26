@@ -1,49 +1,51 @@
 import smbus
-import math
 import time
+import math
 
 # Configuración del bus I2C
-bus = smbus.SMBus(1)  # 1 indica /dev/i2c-1
+bus = smbus.SMBus(1)  # Utiliza 0 para Raspberry Pi Model A y Model B de la primera generación
 address = 0x0D
 
-# Configuración del HMC5883L
-def init_hmc5883l():
-    bus.write_byte_data(address, 0x00, 0x70) # Configuración del registro A
-    bus.write_byte_data(address, 0x01, 0xA0) # Configuración del registro B
-    bus.write_byte_data(address, 0x02, 0x00) # Modo de medición continua
+def read_sensor():
+    # Leer los datos del sensor
+    data = bus.read_i2c_block_data(address, 0x00, 6)
 
-# Leer datos del HMC5883L
-def read_hmc5883l():
-    data = bus.read_i2c_block_data(address, 0x03, 6)
-    x = (data[0] << 8) | data[1]
-    z = (data[2] << 8) | data[3]
-    y = (data[4] << 8) | data[5]
-    
-    if x >= 0x8000:
-        x = -(0x10000 - x)
-    if y >= 0x8000:
-        y = -(0x10000 - y)
-    if z >= 0x8000:
-        z = -(0x10000 - z)
+    # Convertir los datos
+    x = data[0] * 256 + data[1]
+    if x > 32767:
+        x -= 65536
+    y = data[2] * 256 + data[3]
+    if y > 32767:
+        y -= 65536
+    z = data[4] * 256 + data[5]
+    if z > 32767:
+        z -= 65536
 
     return x, y, z
 
-# Calcular ángulo
 def calculate_heading(x, y):
-    heading = math.atan2(y, x)
-    if heading < 0:
-        heading += 2 * math.pi
-    if heading > 2 * math.pi:
-        heading -= 2 * math.pi
-    return math.degrees(heading)
+    angle = math.atan2(y, x)
+    if angle < 0:
+        angle += 2 * math.pi
+    return math.degrees(angle)
 
-# Inicialización
-init_hmc5883l()
-time.sleep(1)
+def get_orientation(heading):
+    if heading >= 315 or heading < 45:
+        return 'N'
+    elif 45 <= heading < 135:
+        return 'E'
+    elif 135 <= heading < 225:
+        return 'S'
+    elif 225 <= heading < 315:
+        return 'W'
 
-# Leer y mostrar el ángulo
-while True:
-    x, y, z = read_hmc5883l()
-    heading = calculate_heading(x, y)
-    print("Ángulo: {:.2f}°".format(heading))
-    time.sleep(1)
+try:
+    while True:
+        x, y, z = read_sensor()
+        heading = calculate_heading(x, y)
+        orientation = get_orientation(heading)
+        print("Ángulo: {:.2f}°, Orientación: {}".format(heading, orientation))
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    print("Programa terminado por el usuario")
