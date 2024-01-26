@@ -5,61 +5,40 @@ import math
 # Dirección I2C del QMC5883L
 QMC5883L_ADDR = 0x0D
 
-# Registros del QMC5883L
-QMC5883L_X_LSB = 0x00
-QMC5883L_CONFIG = 0x09
-
 def init_qmc5883l():
-    bus.write_byte_data(QMC5883L_ADDR, QMC5883L_CONFIG, 0x01)
+    bus.write_byte_data(QMC5883L_ADDR, 0x0B, 0x01)
+    bus.write_byte_data(QMC5883L_ADDR, 0x09, 0x1D)
 
-def read_qmc5883l():
-    data = bus.read_i2c_block_data(QMC5883L_ADDR, QMC5883L_X_LSB, 6)
+def read_sensor():
+    bus.write_byte_data(QMC5883L_ADDR, 0x00, 0x00)
+    data = bus.read_i2c_block_data(QMC5883L_ADDR, 0x00, 6)
     x = data[0] | data[1] << 8
     y = data[2] | data[3] << 8
     z = data[4] | data[5] << 8
-
-    # Convertir a 16 bits si es necesario
-    if x > 32767:
-        x -= 65536
-    if y > 32767:
-        y -= 65536
-    if z > 32767:
-        z -= 65536
-
     return x, y, z
 
-def calibrate_qmc5883l(duration=30):
-    print("Comenzando calibración. Gira el sensor en todas las direcciones durante los próximos {} segundos...".format(duration))
-    max_x = max_y = -math.inf
-    min_x = min_y = math.inf
+def map_value(x, in_min, in_max, out_min, out_max):
+    return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
-    start_time = time.time()
-    while time.time() - start_time < duration:
-        x, y, z = read_qmc5883l()
-        max_x, max_y = max(max_x, x), max(max_y, y)
-        min_x, min_y = min(min_x, x), min(min_y, y)
-        time.sleep(0.1)
+def calibrate_sensor():
+    minX, maxX, minY, maxY = 32767, -32768, 32767, -32768
+    print("Mueva el sensor en todas las direcciones para calibrar...")
+    time.sleep(3)  # Tiempo para mover el sensor
 
-    return (max_x + min_x) / 2, (max_y + min_y) / 2
+    for _ in range(300):
+        x, y, z = read_sensor()
+        minX, maxX = min(x, minX), max(x, maxX)
+        minY, maxY = min(y, minY), max(y, maxY)
+        time.sleep(0.05)
 
-def calculate_heading(x, y, offset_x, offset_y):
-    x -= offset_x
-    y -= offset_y
+    return minX, maxX, minY, maxY
+
+def calculate_heading(x, y):
     heading = math.atan2(y, x)
     if heading < 0:
         heading += 2 * math.pi
     heading = math.degrees(heading)
     return heading
-
-def get_orientation(heading):
-    if heading < 45 or heading >= 315:
-        return 'N'
-    elif heading < 135:
-        return 'E'
-    elif heading < 225:
-        return 'S'
-    else:
-        return 'W'
 
 # Inicializar I2C (smbus)
 bus = smbus.SMBus(1)  # Usar 0 para modelos antiguos de Raspberry Pi
@@ -68,15 +47,17 @@ bus = smbus.SMBus(1)  # Usar 0 para modelos antiguos de Raspberry Pi
 init_qmc5883l()
 
 # Calibrar el sensor
-offset_x, offset_y = calibrate_qmc5883l()
+minX, maxX, minY, maxY = calibrate_sensor()
+print("Calibración completada")
 
 try:
     while True:
-        x, y, z = read_qmc5883l()
-        heading = calculate_heading(x, y, offset_x, offset_y)
-        orientation = get_orientation(heading)
-        print(f"Ángulo: {heading:.2f} grados, Orientación: {orientation}")
-        time.sleep(1)
+        x, y, z = read_sensor()
+        x = map_value(x, minX, maxX, -32768, 32767)
+        y = map_value(y, minY, maxY, -32768, 32767)
+        heading = calculate_heading(x, y)
+        print(f"Ángulo: {heading:.2f} grados")
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
     print("Programa terminado por el usuario")
