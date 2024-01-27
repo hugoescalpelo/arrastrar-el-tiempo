@@ -1,0 +1,61 @@
+import serial
+import time
+import pygame
+from pygame import mixer
+
+def calcular_direccion(angulo):
+    if 315 <= angulo <= 360 or 0 <= angulo < 45:
+        return 'N'
+    elif 45 <= angulo < 135:
+        return 'E'
+    elif 135 <= angulo < 225:
+        return 'S'
+    else:
+        return 'W'
+
+def reproducir_audio(direccion_actual):
+    mixer.music.fadeout(5000) # Crossfade de 5 segundos
+    time.sleep(5) # Esperar a que termine el crossfade
+    mixer.music.load(f'audio0{audios[direccion_actual]}.mp3')
+    mixer.music.play(-1) # Reproducir indefinidamente
+
+# Asignar un archivo de audio a cada dirección
+audios = {'N': '1', 'E': '2', 'S': '3', 'W': '4'}
+
+# Inicializar pygame mixer
+pygame.init()
+mixer.init()
+mixer.music.set_volume(0.7) # Ajustar el volumen si es necesario
+
+puerto_serial = '/dev/ttyACM0'  # Cambia esto según tu configuración de Raspberry Pi
+direccion_anterior = None
+contador_direccion = 0
+
+while True:
+    try:
+        with serial.Serial(puerto_serial, 115200, timeout=1) as ser:
+            if ser.is_open:
+                print("Dispositivo conectado.")
+                while True:
+                    linea = ser.readline().decode().strip()
+                    if linea:  # Asegúrate de que la línea no esté vacía
+                        try:
+                            angulo = float(linea)
+                            direccion_actual = calcular_direccion(angulo)
+                            print(f"Ángulo: {angulo}, Dirección: {direccion_actual}")
+
+                            if direccion_actual == direccion_anterior:
+                                contador_direccion += 1
+                            else:
+                                contador_direccion = 1
+                                direccion_anterior = direccion_actual
+
+                            if contador_direccion == 5:
+                                reproducir_audio(direccion_actual)
+
+                        except ValueError:
+                            # Manejar el caso en que la línea no pueda convertirse a float
+                            print(f"Dato no válido recibido: {linea}")
+    except serial.SerialException:
+        print("Dispositivo no conectado o desconectado. Reintentando...")
+        time.sleep(1)  # Esperar un poco antes de reintentar
