@@ -1,70 +1,49 @@
-import smbus
-import math
-import pygame
-import os
+import serial
 import time
+import pygame
+from pygame import mixer
 
-# Inicializa Pygame para la reproducción de audio
-pygame.mixer.init()
-
-# Configuración del bus I2C para el HMC5883L
-bus = smbus.SMBus(1)
-address = 0x1E
-
-def read_sensor(addr):
-    data = bus.read_i2c_block_data(addr, 0x03, 6)
-    x = data[0] * 256 + data[1]
-    if x > 32767:
-        x -= 65536
-    y = data[4] * 256 + data[5]
-    if y > 32767:
-        y -= 65536
-    z = data[2] * 256 + data[3]
-    if z > 32767:
-        z -= 65536
-    return x, y, z
-
-def calculate_heading(x, y):
-    heading = math.atan2(y, x)
-    if heading < 0:
-        heading += 2 * math.pi
-    return math.degrees(heading)
-
-def get_cardinal(heading):
-    if heading >= 45 and heading < 135:
-        return 'E'
-    elif heading >= 135 and heading < 225:
-        return 'S'
-    elif heading >= 225 and heading < 315:
-        return 'W'
-    else:
+def calcular_direccion(angulo):
+    if 315 <= angulo <= 360 or 0 <= angulo < 45:
         return 'N'
+    elif 45 <= angulo < 135:
+        return 'E'
+    elif 135 <= angulo < 225:
+        return 'S'
+    else:
+        return 'W'
 
-# Configura el HMC5883L
-bus.write_byte_data(address, 0, 0b01110000)
-bus.write_byte_data(address, 1, 0b00100000)
-bus.write_byte_data(address, 2, 0b00000011)
+def reproducir_audio(direccion_actual, direccion_anterior):
+    if direccion_actual != direccion_anterior:
+        mixer.music.fadeout(5000) # Crossfade de 5 segundos
+        time.sleep(5) # Esperar a que termine el crossfade
+        mixer.music.load(f'audio0{audios[direccion_actual]}.mp3')
+        mixer.music.play(-1) # Reproducir indefinidamente
 
-audio_files = {
-    'N': 'Audio/audio01.mp3',
-    'E': 'Audio/audio02.mp3',
-    'S': 'Audio/audio03.mp3',
-    'W': 'Audio/audio04.mp3'
-}
+# Asignar un archivo de audio a cada dirección
+audios = {'N': '1', 'E': '2', 'S': '3', 'W': '4'}
 
-current_cardinal = None
-current_channel = None
+# Inicializar pygame mixer
+pygame.init()
+mixer.init()
+mixer.music.set_volume(0.7) # Ajustar el volumen si es necesario
+
+puerto_serial = '/dev/ttyS0'  # Cambia esto según tu configuración de Raspberry Pi
+direccion_anterior = None
 
 while True:
-    x, y, z = read_sensor(address)
-    heading = calculate_heading(x, y)
-    cardinal = get_cardinal(heading)
-
-    if cardinal != current_cardinal:
-        if current_channel:
-            current_channel.fadeout(1000)
-        current_channel = pygame.mixer.Channel(0)
-        current_channel.play(pygame.mixer.Sound(audio_files[cardinal]), loops=-1)
-        current_cardinal = cardinal
-
-    time.sleep(0.1)
+    try:
+        with serial.Serial(puerto_serial, 115200, timeout=1) as ser:
+            if ser.is_open:
+                print("Dispositivo conectado.")
+                while True:
+                    linea = ser.readline()
+                    if linea:
+                        angulo = float(linea.decode().strip())
+                        direccion_actual = calcular_direccion(angulo)
+                        print(f"Ángulo: {angulo}, Dirección: {direccion_actual}")
+                        reproducir_audio(direccion_actual, direccion_anterior)
+                        direccion_anterior = direccion_actual
+    except serial.SerialException:
+        print("Dispositivo no conectado o desconectado. Reintentando...")
+        time.sleep(1)  # Esperar un poco antes de reintentar
