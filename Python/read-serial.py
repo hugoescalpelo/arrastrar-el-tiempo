@@ -11,9 +11,12 @@ def calcular_direccion(angulo):
     else:
         return 'W'
 
+# Este puerto puede variar dependiendo de tu configuración de Raspberry Pi
+puerto_serial = '/dev/ttyS0'  # Cambia esto según tu configuración de Raspberry Pi
+
 while True:
     try:
-        with serial.Serial('/dev/ttyUSB0', 115200, timeout=1) as ser:
+        with serial.Serial(puerto_serial, 115200, timeout=1) as ser:
             if ser.is_open:
                 print("Dispositivo conectado.")
                 while True:
