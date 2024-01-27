@@ -2,56 +2,70 @@ import smbus
 import time
 import math
 
-# Dirección I2C del QMC5883L
-QMC5883L_ADDR = 0x0D
+# Configura el bus I2C
+bus = smbus.SMBus(1)
 
-# Crear una instancia de smbus para la comunicación I2C
-bus = smbus.SMBus(1)  # 1 indica /dev/i2c-1
+# Dirección del sensor QMC5883L
+address = 0x0D
 
-# Función para inicializar el sensor
-def init_sensor():
-    bus.write_byte_data(QMC5883L_ADDR, 0x0B, 0x01)
-    bus.write_byte_data(QMC5883L_ADDR, 0x09, 0x1D)
+# Valores de calibración
+minX, maxX = -1147, 1160
+minY, maxY = 521, 2532
 
-# Función para leer datos del sensor
-def leer_sensor():
-    bus.write_byte(QMC5883L_ADDR, 0x00)
-    data = bus.read_i2c_block_data(QMC5883L_ADDR, 0x00, 6)
-    x = data[0] | data[1] << 8
-    y = data[2] | data[3] << 8
-    z = data[4] | data[5] << 8
-    return x, y, z
+def read_raw_data(addr):
+    # Lee dos bytes de datos desde addr
+    low = bus.read_byte_data(address, addr)
+    high = bus.read_byte_data(address, addr+1)
 
-# Inicializar el sensor
-init_sensor()
+    # Combina ambos bytes
+    value = ((high << 8) + low)
 
-# Calibración
-minX = minY = 32767
-maxX = maxY = -32768
-print("Mueva el sensor en todas las direcciones para calibrar...")
-time.sleep(3)
-for i in range(300):
-    x, y, z = leer_sensor()
-    minX = min(minX, x)
-    maxX = max(maxX, x)
-    minY = min(minY, y)
-    maxY = max(maxY, y)
-    time.sleep(0.05)
-print("Calibración completada")
+    # Ajusta a valor negativo si es necesario
+    if (value > 32768):
+        value = value - 65536
+    return value
 
-# Bucle principal
-while True:
-    x, y, z = leer_sensor()
-
-    # Normalizar valores
-    x = int((x - minX) * (32767 - (-32768)) / (maxX - minX) + (-32768))
-    y = int((y - minY) * (32767 - (-32768)) / (maxY - minY) + (-32768))
-
-    # Calcular ángulo
+def get_heading(x, y):
     heading = math.atan2(y, x)
-    if heading < 0:
-        heading += 2 * math.pi
-    heading = heading * 180 / math.pi
+    # Ajuste por declinación magnética si es necesario
+    # heading += declination
 
-    print("Ángulo: {:.2f} grados".format(heading))
-    time.sleep(0.5)
+    # Convertir de radianes a grados
+    heading = heading * 180/math.pi
+
+    # Corrección de ángulo negativo
+    if heading < 0:
+        heading += 360
+
+    return heading
+
+def get_direction(heading):
+    if heading >= 315 or heading < 45:
+        return "N"
+    elif 45 <= heading < 135:
+        return "E"
+    elif 135 <= heading < 225:
+        return "S"
+    elif 225 <= heading < 315:
+        return "W"
+
+try:
+    while True:
+        # Leer datos del sensor
+        x = read_raw_data(0x01)
+        y = read_raw_data(0x03)
+        z = read_raw_data(0x05)
+
+        # Calibración
+        x_scaled = (x - minX) / (maxX - minX) * 2 - 1
+        y_scaled = (y - minY) / (maxY - minY) * 2 - 1
+
+        # Obtener ángulo y dirección
+        heading = get_heading(x_scaled, y_scaled)
+        direction = get_direction(heading)
+
+        print("Ángulo:", heading, "Dirección:", direction)
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    print("Programa interrumpido por el usuario")
