@@ -2,70 +2,77 @@ import smbus
 import time
 import math
 
-# Configura el bus I2C
-bus = smbus.SMBus(1)
-
-# Dirección del sensor QMC5883L
-address = 0x0D
+# Dirección del QMC5883L y registros
+QMC5883L_ADDR = 0x0D
+QMC5883L_DATA = 0x00
+QMC5883L_CONFIG = 0x09
+QMC5883L_RESET = 0x0B
 
 # Valores de calibración
-minX, maxX = -1147, 1160
-minY, maxY = 521, 2532
+minX, maxX = -963, 1080
+minY, maxY = 0, 2582
 
-def read_raw_data(addr):
-    # Lee dos bytes de datos desde addr
-    low = bus.read_byte_data(address, addr)
-    high = bus.read_byte_data(address, addr+1)
+# Inicializar el bus I2C
+bus = smbus.SMBus(1)  # 1 indica /dev/i2c-1
 
-    # Combina ambos bytes
-    value = ((high << 8) + low)
+# Configuración del sensor
+bus.write_byte_data(QMC5883L_ADDR, QMC5883L_RESET, 0x01)
+bus.write_byte_data(QMC5883L_ADDR, QMC5883L_CONFIG, 0x1D)
 
-    # Ajusta a valor negativo si es necesario
-    if (value > 32768):
-        value = value - 65536
-    return value
+def leerSensor():
+    # Leer 6 bytes de datos: X LSB, X MSB, Y LSB, Y MSB, Z LSB, Z MSB
+    data = bus.read_i2c_block_data(QMC5883L_ADDR, QMC5883L_DATA, 6)
+    x = data[0] | data[1] << 8
+    y = data[2] | data[3] << 8
+    z = data[4] | data[5] << 8
 
-def get_heading(x, y):
-    heading = math.atan2(y, x)
-    # Ajuste por declinación magnética si es necesario
-    # heading += declination
+    # Convertir a 16 bits
+    if x > 32767:
+        x -= 65536
+    if y > 32767:
+        y -= 65536
+    if z > 32767:
+        z -= 65536
 
-    # Convertir de radianes a grados
-    heading = heading * 180/math.pi
+    return x, y, z
 
-    # Corrección de ángulo negativo
-    if heading < 0:
-        heading += 360
+def calcularAngulo(x, y):
+    # Normalizar valores
+    x = (x - minX) / (maxX - minX) * 65535 - 32768
+    y = (y - minY) / (maxY - minY) * 65535 - 32768
 
-    return heading
+    # Calcular el ángulo
+    angulo = math.atan2(y, x)
+    if angulo < 0:
+        angulo += 2 * math.pi
+    angulo = angulo * 180 / math.pi
+    return angulo
 
-def get_direction(heading):
-    if heading >= 315 or heading < 45:
+def imprimirOrientacion(angulo):
+    if angulo > 337.5 or angulo <= 22.5:
         return "N"
-    elif 45 <= heading < 135:
+    elif angulo > 22.5 and angulo <= 67.5:
+        return "NE"
+    elif angulo > 67.5 and angulo <= 112.5:
         return "E"
-    elif 135 <= heading < 225:
+    elif angulo > 112.5 and angulo <= 157.5:
+        return "SE"
+    elif angulo > 157.5 and angulo <= 202.5:
         return "S"
-    elif 225 <= heading < 315:
+    elif angulo > 202.5 and angulo <= 247.5:
+        return "SW"
+    elif angulo > 247.5 and angulo <= 292.5:
         return "W"
+    else:
+        return "NW"
 
 try:
     while True:
-        # Leer datos del sensor
-        x = read_raw_data(0x01)
-        y = read_raw_data(0x03)
-        z = read_raw_data(0x05)
-
-        # Calibración
-        x_scaled = (x - minX) / (maxX - minX) * 2 - 1
-        y_scaled = (y - minY) / (maxY - minY) * 2 - 1
-
-        # Obtener ángulo y dirección
-        heading = get_heading(x_scaled, y_scaled)
-        direction = get_direction(heading)
-
-        print("Ángulo:", heading, "Dirección:", direction)
+        x, y, z = leerSensor()
+        angulo = calcularAngulo(x, y)
+        orientacion = imprimirOrientacion(angulo)
+        print(f"Ángulo: {angulo:.2f}°, Orientación: {orientacion}")
         time.sleep(1)
 
 except KeyboardInterrupt:
-    print("Programa interrumpido por el usuario")
+    print("Programa detenido.")
