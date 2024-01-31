@@ -1,5 +1,7 @@
 # Programa en Python
 
+> Esta documentación está depreciada debido a que no fué posible manejar el sensor con la Raspberry Pi. Ver el Journal en la fecha 2024-01-26 para mas detalles.
+
 En este documento encontrarás instrucciones para correr el programa de Python.
 
 ## Configuración de Raspberry Pi

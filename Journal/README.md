@@ -85,16 +85,20 @@ Una vez que logré identificarlo, pude generar un programa que lo leyera en Ardu
 
 Luego de hacer algunas lecturas simples, continué con el programa en la raspberry pi y logré detonar los audios, pero noté que las lecturas no tenían el rango completo y que los ángulos solo iban de 45° a 130°, por lo que regresé al programa de Arduino a buscar opciones de calibración.
 
-Encontré que la biblioteca FastIMU incluye un programa que toma las lecturas luego de la calibración. El programa tiene un proceso de calibración de 30 segundos donde hace muchas lecturas y toma los rangos del magnetómetro, este programa quedó en rel repositorio como "Calibracion". Luego los usa para dar el rango completo de 0° a 360°. Dejé ese programa y continué en Raspberry Pi.
+Encontré que la biblioteca FastIMU incluye un programa que toma las lecturas luego de la calibración. El programa tiene un proceso de calibración de 30 segundos donde hace muchas lecturas y toma los rangos del magnetómetro, este programa quedó en el repositorio como "Calibracion.ino". Luego los usa para dar el rango completo de 0° a 360°. Dejé ese programa y continué en Raspberry Pi.
 
-Ya en Raspberry Pi noté que no se quedaban guardadas las calibraciones, por lo que regresé a Arduino UNO e hice un programa que diera como resultado los rangos leídos. Luego de varias pruebas de calibración, obtuve los siguientes valores de calibración:
+Ya en Raspberry Pi noté que no se quedaban guardadas las calibraciones, por lo que regresé a Arduino UNO e hice un programa que diera como resultado los rangos leídos, este programa quedó llamado "Calibracion2.ino". Luego de varias pruebas de calibración, obtuve los siguientes valores de calibración:
+```
+minX: -963
+maxX: 1080
+minY: 0
+maxY: 2582
+```
 
-minX = minY = 32767;
-maxX = maxY = -32768;
 
-El programa "Calibración" quedó modificado para que devolviera estos valores. Es **MUY IMPORTANTE** realizar esta calibración con cada sensor nuevo, puede variar con la construcción.
+El programa "Calibración2.ino" fue modificado para que devolviera estos valores. Es **MUY IMPORTANTE** realizar esta calibración con cada sensor nuevo, puede variar con la construcción.
 
-Luego generé el programa "Calibracion2" para que tomara dichos valores y devolviera por serial el ángulo considerando los valores de calibracion. Este fue el programa que quedó en el Arduino UNO.
+Luego generé el programa "qmc5883l" para que tomara dichos valores y devolviera por serial el ángulo considerando los valores de calibracion. Este fue el programa que quedó en el Arduino UNO.
 
 Volví a la Raspberry Pi y tomé el valor de lectura del sensor. Este programa fue exitoso en el sentido de que hace el crossfade para reproducir el audio, pero tenía el problema de que al cambiar la posición del sensor el ruido del movimiento podía hacer que un audio equivocado se reprodujerea algunos segundos.
 
