@@ -39,6 +39,8 @@ Este repositorio tiene como proposito correr en una Raspberry Pi. Es compatible 
 
 Este repositorio sólo extiende funcionamiento con el sensor magnetómetro QMC5883L ubicado en la dirección I2C 0x0D.
 
+Dado que este proyecto no usa los puertos GPIO de la Raspberry Pi, en teoría es compatible con PC, Linux y Mac.
+
 ## Instrucciones
 
 Para clonar este repositorio en Raspberry Pi, realiza lo siguiente:
