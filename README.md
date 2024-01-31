@@ -62,8 +62,6 @@ Para clonar este repositorio en Raspberry Pi, realiza lo siguiente:
 
 Para poder hacer funcionar este proyecto se recomienda leer la documentación completa primero.
 
+- [Programa de Arduino para leer la brújula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/tree/main/Arduino)
 - [Instalación y arranque automático](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/README.md)
 
-En caso de que desees cambiar el hardware, alguna biblioteca o entender cómo funcionan la carga de audios, se recomienda leer la sección de tests.
-
-- [Brujula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/magnetometer.md)

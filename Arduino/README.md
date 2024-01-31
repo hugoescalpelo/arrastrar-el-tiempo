@@ -15,12 +15,13 @@ Este programa sólo funciona en Arduino UNO. Se probó su compatibilidad sin bib
 ## Circuito de conexión
 
 Se realizó la siguiente conexión entre el sensor y el Arduino UNO.
-
+```
 QMC5883L    Arduino UNO
 VCC-------> 5V
 GND-------> GND
 SDA-------> SDA
 SCL-------> SCL
+```
 
 ## Obtener valores de calibración
 
