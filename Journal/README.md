@@ -130,3 +130,5 @@ Con esto cierro el desarrollo. Quedo a la espera de material y observaciones de 
 
 Complementé el Journal. Espero material de registro de Sué.
 
+---
+He completado la documentación del proyecto.
