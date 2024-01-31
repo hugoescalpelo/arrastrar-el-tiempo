@@ -13,19 +13,19 @@ Fecha de presentación 27 de enero de 2024
 
 | Cantidad | Concepto |
 |----------|----------|
-|1|Transmisor de radio|
-|1|Raspberry Pi|
-|1|Brujula Digital|
-|1|Bateria|
-|2|Reguladores de voltaje|
+|1|Transmisor de radio 500mW|
+|1|Raspberry Pi 3B+ 2GB|
+|1|Brujula Digital QMC5883L|
+|1|Arduino UNO|
+|1|Bateria 20000MAh|
 |1|Cableado|
-|1|Tornillería|
-|1|Desarrollo|
 
 ## Journal
 
 Puedes conocer un diario de desarrollo en el siguiente enlace.
 [Journal](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/README.md)
+
+Es muy importante leer el Journal del proyecto para comprender en detalle las dificultades de manejar el magnetómetro. Expreso las peculiaridades del sensor y la necesidad de un proceso previo de calibración personalizada para cada sensor a pesar de que sean del mismo modelo que el del desarrollo inicial.
 
 ## Diagramas
 
@@ -64,4 +64,4 @@ Para poder hacer funcionar este proyecto se recomienda leer la documentación co
 
 En caso de que desees cambiar el hardware, alguna biblioteca o entender cómo funcionan la carga de audios, se recomienda leer la sección de tests.
 
--[Brujula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/magnetometer.md)
+- [Brujula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/blob/main/Python/magnetometer.md)
