@@ -67,3 +67,8 @@ Para poder hacer funcionar este proyecto se recomienda leer la documentación co
 - [Programa de Arduino para leer la brújula digital](https://github.com/hugoescalpelo/arrastrar-el-tiempo/tree/main/Arduino)
 - [Instalación y arranque automático](https://github.com/hugoescalpelo/arrastrar-el-tiempo/tree/main/Python)
 
+## Registro
+
+Puedes ver las publicaciones relacionadas en Instragram
+
+[Prueba de circuitos](https://www.instagram.com/p/C2nRRE1Okpn/)
