@@ -132,3 +132,7 @@ Complementé el Journal. Espero material de registro de Sué.
 
 ---
 He completado la documentación del proyecto.
+
+## 2024-03-11
+
+Se ha agregado un documento de excel describiendo el material usado para la presentación y sus costos. En el mismo documento se detalla el material minimo recomendado para reproducir el proyecto.
